@@ -1,86 +1,182 @@
-import { React, useEffect, useState } from "react";
-import { gql, useQuery } from "@apollo/client";
-import Graph from 'vis-react';
+import { React, useState } from "react";
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import {
+    Drawer,
+    List,
+    Divider,
+    IconButton,
+    Container,
+    ListItem,
+    ListItemText,
+    ListItemIcon,
+} from '@material-ui/core'
+import {
+    ChevronLeft as ChevronLeftIcon,
+    People as PeopleIcon,
+    Timeline as TimelineIcon
+} from '@material-ui/icons'
+import { makeStyles } from '@material-ui/core/styles'
+import clsx from 'clsx'
+import Timeline from './components/Timeline'
+import Exploration from './components/Exploration'
 
 
-const QUERY = gql`
-  query {
-    interactions(options: { sort: [{ first_seen: ASC }] }) {
-    first_seen
-    source {
-      name
+
+
+const drawerWidth = 240
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        display: 'flex',
+    },
+    toolbar: {
+        paddingRight: 24, // keep right padding when drawer closed
+    },
+    toolbarIcon: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: '0 8px',
+        ...theme.mixins.toolbar,
+    },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    appBarShift: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    menuButton: {
+        marginRight: 36,
+    },
+    menuButtonHidden: {
+        display: 'none',
+    },
+    title: {
+        flexGrow: 1,
+    },
+    drawerPaper: {
+        position: 'relative',
+        whiteSpace: 'nowrap',
+        width: drawerWidth,
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    },
+    drawerPaperClose: {
+        overflowX: 'hidden',
+        transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+        }),
+        width: theme.spacing(7),
+        [theme.breakpoints.up('sm')]: {
+            width: theme.spacing(9),
+        },
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
+        flexGrow: 1,
+        height: '100vh',
+        overflow: 'auto',
+    },
+    container: {
+        //    paddingTop: theme.spacing(4),
+        //    paddingBottom: theme.spacing(4),
+    },
+    paper: {
+        padding: theme.spacing(2),
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+    },
+    fixedHeight: {
+        height: 240,
+    },
+    navLink: {
+        textDecoration: 'none',
+        color: 'inherit',
+    },
+    appBarImage: {
+        maxHeight: '75px',
+        paddingRight: '20px',
+    },
+}))
+
+
+export default function App() {
+    const [open, setOpen] = useState(true)
+    const handleDrawerOpen = () => {
+        setOpen(true)
     }
-    target {
-      name
+    const handleDrawerClose = () => {
+        setOpen(false)
     }
-  }
-  
-  }
-`;
+    const classes = useStyles()
 
-const graph = {
-    nodes: [
-    ],
-    edges: [
-    ]
-};
+    return (
+        <Router>
+            <div style={{ 'display': 'flex', 'flexDirection': 'row' }}>
 
+                <Drawer
+                    variant="permanent"
+                    classes={{
+                        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+                    }}
+                    open={open}
+                >
+                    <div className={classes.toolbarIcon}>
+                        {open ? <IconButton onClick={handleDrawerClose}>
+                            <ChevronLeftIcon />
+                        </IconButton> :
+                            <IconButton onClick={handleDrawerOpen}>
+                                <ChevronLeftIcon />
+                            </IconButton>
+                        }
+                    </div>
+                    <Divider />
+                    <List>
+                        <Link to="/" className={classes.navLink}>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <PeopleIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Exploration" />
+                            </ListItem>
+                        </Link>
 
+                        <Link to="/timeline" className={classes.navLink}>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <TimelineIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Timeline" />
+                            </ListItem>
+                        </Link>
+                    </List>
+                    <Divider />
+                </Drawer>
 
-function App() {
-
-    const [nodeObject, setNodeObject] = useState();
-    const [edgeObject, setEdgeObject] = useState();
-    const { loading, error, data } = useQuery(QUERY);
-
-    const nodes = []
-
-    const handleAdd = () => {
-        data.interactions.forEach((x, i) => {
-            setTimeout(() => {
-            if (!nodes.includes(x.source.name)) {
-                nodeObject.add({ id: x.source.name, label: x.source.name })
-                nodes.push(x.source.name)
-            }
-
-            if (!nodes.includes(x.target.name)) {
-                nodeObject.add({ id: x.target.name, label: x.target.name })
-                nodes.push(x.target.name)
-            }
-
-            edgeObject.add({ from: x.source.name, to: x.target.name });
-
-        }, 200)
-    }
-        )
-    }
-
-    const getEdges = (edges) => {
-        setEdgeObject(edges)
-    }
-
-    const getNodes = (nodes) => {
-        setNodeObject(nodes)
-    }
-
-    if (loading) {
-        return "loading"
-    }
-
-    if (error) {
-        return <div>error</div>
-    }
-
-
-    return <div style={{height:"100%", width:"100%"}}><Graph
-        graph={graph}
-        //options={options}
-        //events={events}
-        getEdges={getEdges}
-        getNodes={getNodes}
-    />
-        <button onClick={handleAdd}>Add harry potter network</button>
-    </div>
+                <main className={classes.content}>
+                    <div className={classes.appBarSpacer} />
+                    <Container maxWidth="lg" className={classes.container}>
+                        <Switch>
+                            <Route exact path="/" component={Exploration} />
+                            <Route exact path="/timeline" component={Timeline} />
+                        </Switch>
+                    </Container>
+                </main>
+            </div>
+        </Router>
+    )
 }
-
-export default App;
