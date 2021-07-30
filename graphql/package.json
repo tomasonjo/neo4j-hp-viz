@@ -1,0 +1,18 @@
+{
+  "name": "hp-viz-graphql",
+  "version": "1.0.0",
+  "description": "GraphQL endpoint for hp-viz project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tomaz Bratanic",
+  "license": "ISC",
+  "dependencies": {
+    "@neo4j/graphql": "^1.2.4",
+    "apollo-server": "^3.1.1",
+    "graphql": "^15.5.1",
+    "neo4j-driver": "^4.3.1"
+  }
+}
