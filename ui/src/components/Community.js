@@ -31,15 +31,11 @@ function Community() {
     const [graph, setGraph] = useState({ nodes: [], edges: [] })
 
     useEffect(() => {
-
-        if (!nodeLoading && !relLoading) {
-
             setGraph({
                 nodes: nodeData.characters.map(el => ({ id: el.name, label: el.name, group: el.community, value: el.pagerank})),
                 edges: relData.interactions.map(el => ({ from: el.source.name, to: el.target.name })),
                 rand: Math.random().toString()
             })
-        }
     }, [nodeData, relData])
 
     if (nodeLoading || relLoading) {
