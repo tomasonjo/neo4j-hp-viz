@@ -14,6 +14,8 @@ const typeDefs = `
         house: House @relationship(type: "BELONGS_TO", direction: OUT)
         loyalty: [Group] @relationship(type: "LOYAL_TO", direction: OUT)
         family: [Character] @relationship(type: "FAMILY_MEMBER", direction: OUT)
+        pagerank: Float
+        community: Int
     }
 
     type House @exclude(operations: [CREATE, UPDATE, DELETE]){

@@ -14,12 +14,15 @@ import {
 import {
     ChevronLeft as ChevronLeftIcon,
     People as PeopleIcon,
-    Timeline as TimelineIcon
+    Timeline as TimelineIcon,
+    BlurOn as BlurOnIcon
 } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import Timeline from './components/Timeline'
 import Exploration from './components/Exploration'
+import Community from './components/Community'
+
 
 
 
@@ -163,6 +166,14 @@ export default function App() {
                                 <ListItemText primary="Timeline" />
                             </ListItem>
                         </Link>
+                        <Link to="/community" className={classes.navLink}>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <BlurOnIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Community" />
+                            </ListItem>
+                        </Link>
                     </List>
                     <Divider />
                 </Drawer>
@@ -173,6 +184,7 @@ export default function App() {
                         <Switch>
                             <Route exact path="/" component={Exploration} />
                             <Route exact path="/timeline" component={Timeline} />
+                            <Route exact path="/community" component={Community} />
                         </Switch>
                     </Container>
                 </main>

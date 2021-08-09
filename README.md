@@ -49,6 +49,30 @@ FOREACH (f in split(row.family,',') | MERGE (f1:Character{name:f}) MERGE (c)-[t:
 
 ```
 
+Run pagerank:
+
+```
+CALL gds.pageRank.write({
+    nodeQuery:'MATCH (c:Character) RETURN id(c) as id',
+    relationshipQuery:'MATCH (c1:Character)-[:INTERACTS]-()-[:INTERACTS]-(c2:Character)
+                       RETURN id(c1) as source, id(c2) as target',
+    writeProperty:'pagerank'
+
+})
+```
+
+Run Louvain:
+
+```
+CALL gds.louvain.write({
+    nodeQuery:'MATCH (c:Character) RETURN id(c) as id',
+    relationshipQuery:'MATCH (c1:Character)-[:INTERACTS]-()-[:INTERACTS]-(c2:Character)
+                       RETURN id(c1) as source, id(c2) as target',
+    writeProperty:'community'
+
+})
+```
+
 Create full text index
 
 ```
