@@ -10,7 +10,7 @@
   "author": "Tomaz Bratanic",
   "license": "ISC",
   "dependencies": {
-    "@neo4j/graphql": "^1.2.4",
+    "@neo4j/graphql": "2.0.0-rc.2",
     "apollo-server": "^3.1.1",
     "graphql": "^15.5.1",
     "neo4j-driver": "^4.3.1"

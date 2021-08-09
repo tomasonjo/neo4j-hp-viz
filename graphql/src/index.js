@@ -2,6 +2,8 @@ const { Neo4jGraphQL } = require("@neo4j/graphql");
 const neo4j = require("neo4j-driver");
 const { ApolloServer } = require("apollo-server");
 
+const PORT = 4000
+
 const typeDefs = `
     type Character @exclude(operations: [CREATE, UPDATE, DELETE]){
         name: String
@@ -52,4 +54,4 @@ const server = new ApolloServer({
     context: ({ req }) => ({ req }),
 });
 
-server.listen(4000).then(() => console.log("Online"));
+server.listen(PORT).then(() => console.log(`GraphQL endpoint is available at ${PORT}`));
