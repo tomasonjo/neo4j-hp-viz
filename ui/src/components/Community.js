@@ -35,7 +35,7 @@ function Community() {
         if (!nodeLoading && !relLoading) {
 
             setGraph({
-                nodes: nodeData.characters.map(el => ({ id: el.name, label: el.name, group: el.community, size: el.pagerank })),
+                nodes: nodeData.characters.map(el => ({ id: el.name, label: el.name, group: el.community, value: el.pagerank})),
                 edges: relData.interactions.map(el => ({ from: el.source.name, to: el.target.name })),
                 rand: Math.random().toString()
             })
@@ -48,7 +48,17 @@ function Community() {
 
     const options = {
         edges: {
-            arrows: ''
+            arrows: {
+                to:{
+                    enabled:false
+                }
+            },
+            color:{
+                opacity:0.6
+            }
+        },
+        nodes:{
+            shape:'dot'
         },
         physics: {
             barnesHut: {
@@ -63,7 +73,7 @@ function Community() {
             <Graph
                 key={graph.rand}
                 graph={graph}
-                style={{ height: "65vh" }}
+                style={{ height: "85vh" }}
                 options={options}
             />
         </div>
