@@ -45,7 +45,7 @@ function Timeline() {
 
                 edgeObject.add({ from: x.source.name, to: x.target.name });
 
-            }, 200)
+            }, 200 * i)
         }
         )
     }
@@ -72,13 +72,14 @@ function Timeline() {
         }}
 
 
-    return <div style={{ height: "100%", width: "100%" }}><Graph
+    return <div style={{ height: "80vh", width: "100%" }}>
+        <Graph
         graph={graph}
         options={options}
         getEdges={getEdges}
         getNodes={getNodes}
-    />
-        <button onClick={handleAdd}>Add harry potter network</button>
+        />
+        <button onClick={handleAdd}>Start network timeline visualization</button>
     </div>
 }
 

@@ -11,6 +11,7 @@ docker-compose up
 Open Neo4j Browser at localhost:7474. Login using username "neo4j" and password "letmein".
 Run the following two queries to seed the database.
 
+
 Import characters
 
 ```
@@ -28,4 +29,28 @@ MATCH (s:Character{name:row.source})
 MATCH (t:Character{name:row.target})
 MERGE (s)-[:INTERACTS]->(i:Interaction)-[:INTERACTS]->(t)
 SET i.first_seen = toInteger(row.value)
+```
+
+Import metadata
+
+```
+LOAD CSV WITH HEADERS FROM "file:///characters.csv" as row
+MERGE (c:Character{name:row.title})
+SET c.url = row.url,
+    c.aliases = row.aliases,
+    c.blood = row.blood,
+    c.nationality = row.nationality,
+    c.species = row.species,
+    c.gender = row.gender
+FOREACH (h in CASE WHEN row.house IS NOT NULL THEN [1] ELSE [] END | MERGE (h1:House{name:row.house}) MERGE (c)-[:BELONGS_TO]->(h1))
+FOREACH (l in split(row.loyalty,',') | MERGE (g:Group{name:l}) MERGE (c)-[:LOYAL_TO]->(g))
+FOREACH (f in split(row.family,',') | MERGE (f1:Character{name:f}) MERGE (c)-[t:FAMILY_MEMBER]->(f1))  
+
+
+```
+
+Create full text index
+
+```
+CREATE FULLTEXT INDEX characterSearch FOR (n:Character) ON EACH [n.name]
 ```
