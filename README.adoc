@@ -52,7 +52,7 @@ The popup has an option to expand relationships for a selected characters, givin
 ### Timeline
 
 .Timeline component
-image::img/exploration.png[]
+image::img/timeline.png[]
 
 This component fetches all the interaction data from GraphQL.
 When you click on the start button, it then adds a new relationship every 200ms, giving it a dynamic network visualization.
