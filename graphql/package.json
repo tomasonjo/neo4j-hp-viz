@@ -4,7 +4,7 @@
   "description": "GraphQL endpoint for hp-viz project",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tomaz Bratanic",
@@ -14,5 +14,10 @@
     "apollo-server": "^3.1.1",
     "graphql": "^15.5.1",
     "neo4j-driver": "^4.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.6",
+    "@babel/preset-env": "^7.12.1"
   }
 }
