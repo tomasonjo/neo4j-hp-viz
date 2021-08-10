@@ -13,21 +13,17 @@ type Character @exclude(operations: [CREATE, UPDATE, DELETE]){
     pagerank: Float
     community: Int
 }
-
 type House @exclude(operations: [CREATE, UPDATE, DELETE]){
     name: String
 }
-
 type Group @exclude(operations: [CREATE, UPDATE, DELETE]){
     name: String
 }
-
 type Interaction @exclude(operations: [CREATE, UPDATE, DELETE]){
     source: Character @relationship(type: "INTERACTS", direction: IN)
     target: Character @relationship(type: "INTERACTS", direction: OUT)
     first_seen: Int
 }
-
 type Query{
     characterSearch(search: String):[Character] @cypher(statement:"""
         CALL db.index.fulltext.queryNodes('characterSearch', $search + '*') YIELD node

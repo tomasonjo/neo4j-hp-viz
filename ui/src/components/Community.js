@@ -27,10 +27,12 @@ const REL_QUERY = gql`
 `;
 
 function Community() {
+    // Fetch node and relationship data for our network visualization
     const { loading: nodeLoading, data: nodeData } = useQuery(NODE_QUERY);
     const { loading: relLoading, data: relData } = useQuery(REL_QUERY);
     const [graph, setGraph] = useState({ nodes: [], edges: [] });
 
+    // Construct a VisJS object based on node and rel graphql responses
     useEffect(() => {
         if (nodeData && relData) {
             setGraph({
@@ -53,6 +55,7 @@ function Community() {
         return <CircularProgress />;
     }
 
+    // VisJS visualization options
     const options = {
         edges: {
             arrows: {

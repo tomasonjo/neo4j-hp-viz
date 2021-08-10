@@ -12,6 +12,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 
+// Query for autocomplete
 const SEARCH_QUERY = gql`
   query search($characterSearch: String!) {
     characterSearch(search: $characterSearch) {
@@ -20,6 +21,7 @@ const SEARCH_QUERY = gql`
   }
 `;
 
+// Query for initial network visualization based of a single person
 const EXPLORATION_QUERY = gql`
   query explore($name: String) {
     characters(where: { name: $name }) {
@@ -37,7 +39,8 @@ const EXPLORATION_QUERY = gql`
   }
 `;
 
-const CHARACTER_QUERY = gql`
+// Query to fetch data for a character popup
+const CHARACTER_POPUP_QUERY = gql`
   query explore($name: String) {
     characters(where: { name: $name }) {
       name
@@ -57,9 +60,14 @@ function Exploration() {
     const [allNodes, setAllNodes] = useState([]);
     const [allEdges, setAllEdges] = useState([]);
     const [currentNode, setCurrentNode] = useState([]);
-    const [fetchSingleCharacterData, { data: characterData }] =
-        useLazyQuery(CHARACTER_QUERY);
-    const [fetchCharacterData, { loading, data }] = useLazyQuery(
+    // function to fetch character popup data
+    const [fetchCharacterPopupData, { data: characterData }] =
+        useLazyQuery(CHARACTER_POPUP_QUERY);
+
+    // function to populate initial network visualization
+    // based on the selected character
+    // In the onComplete section we populate the VisJS object
+    const [fetchCharacterOptions] = useLazyQuery(
         EXPLORATION_QUERY,
         {
             onCompleted: (data) => {
@@ -125,6 +133,8 @@ function Exploration() {
         setNodeObject(nodes);
     };
 
+    // Interact with VisJS network object
+    // to add click interactions
     const getNetwork = (network) => {
         const localNetwork = network;
         localNetwork.on("click", (params) => {
@@ -134,14 +144,15 @@ function Exploration() {
                 !current.startsWith("group") &&
                 !current.startsWith("house")
             ) {
-                fetchSingleCharacterData({ variables: { name: current } });
+                fetchCharacterPopupData({ variables: { name: current } });
                 setCurrentNode(current);
                 setIsOpen(true);
             }
         });
     };
 
-    const fetchCharacters = async (input) => {
+    // Autcomplete character search
+    const autompleteCharacters = async (input) => {
         if (input && input.trim().length < 3) {
             return [];
         }
@@ -159,6 +170,7 @@ function Exploration() {
         }
     };
 
+    // Expand relationships in the popup
     const expandRelationships = async () => {
         const rels = await client.query({
             query: EXPLORATION_QUERY,
@@ -218,12 +230,14 @@ function Exploration() {
         closeModal();
     };
 
+    // Default options for autocomplete
     const defaultOptions = [
         "Harry Potter",
         "Hermione Granger",
         "Ronald Weasley",
     ].map((el) => ({ label: el, value: el }));
 
+    // Visualization options for VisJS
     const options = {
         nodes: {
             shape: "dot",
@@ -240,6 +254,7 @@ function Exploration() {
         setIsOpen(false);
     }
 
+    // React modal styling
     const customStyles = {
         content: {
             top: "50%",
@@ -256,10 +271,10 @@ function Exploration() {
             <div style={{ width: "25vw" }}>
                 <h3>Search a character by name</h3>
                 <AsyncSelect
-                    loadOptions={fetchCharacters}
+                    loadOptions={autompleteCharacters}
                     defaultOptions={defaultOptions}
                     onChange={(opt) =>
-                        fetchCharacterData({ variables: { name: opt.value } })
+                        fetchCharacterOptions({ variables: { name: opt.value } })
                     }
                     placeholder="Search a character"
                     className="select"

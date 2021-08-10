@@ -1,5 +1,15 @@
 # neo4j-hp-viz
 
+This project is a demo application for network visualizations using the [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database) application.
+The dataset consists of characters and their interactions from the first Harry Potter book.
+If you want to learn more about how the dataset was created check out [my blog post](https://medium.com/neo4j/turn-a-harry-potter-book-into-a-knowledge-graph-ffc1c45afcc8).
+
+
+The GraphQL endpoint is using the [Neo4j Graphql](https://github.com/neo4j/graphql) library.
+For the network visualizations, VisJS is being used.
+I have also added click events to network visualization to make it an interactive explorer of your graph data.
+Hopefully, this project will help you get started with implementing your own network visualizations with the GRANDstack.
+
 Start the project with:
 
 ```
@@ -8,73 +18,54 @@ docker-compose up
 
 ## Seed data
 
+Run the following command
+
+```
+cat seed_data.cql | docker exec -i neo4j cypher-shell -u neo4j -p letmein
+```
+
+Or if you are on windows
+
 Open Neo4j Browser at localhost:7474. Login using username "neo4j" and password "letmein".
-Run the following two queries to seed the database.
+Execute the queries stored in the `seed_data.cql`
+
+## Graph schema
+
+Graph consists of characters from the first Harry Potter book, their interactions, to which house they belong, and to which group they are loyal.
+
+.Model
+image::img/schema.png[]
+
+## UI components
+
+Frontend consists of the following components:
+
+### Exploration
+
+.Exploration component
+image::img/exploration.png[]
+
+This components features an autocomplete function using a Full-Text index.
+Once you select a character, a small character subgraph is visualized.
+If you click on any other characters a popup will show.
+The popup has an option to expand relationships for a selected characters, giving it a bit of an interactivity.
+
+### Timeline
+
+.Timeline component
+image::img/exploration.png[]
+
+This component fetches all the interaction data from GraphQL.
+When you click on the start button, it then adds a new relationship every 200ms, giving it a dynamic network visualization.
+The relationships are ordered in the order they first appeared in the book, so in theory, you should see how relationships formed through time in the HP book.
+
+### Network visualization
+
+.Network component
+image::img/network.png[]
+
+This component visualizes a classic network analysis.
+Nodes are colored based on the community they belong to and their size is calculated by how central in the network they are (pagerank).
 
 
-Import characters
 
-```
-LOAD CSV WITH HEADERS FROM "file:///character_first_seen.csv" as row
-MERGE (c:Character{name:row.name})
-SET c.first_seen = toInteger(row.value)
-```
-
-
-Import interactions
-
-```
-LOAD CSV WITH HEADERS FROM "file:///rel_first_seen.csv" as row
-MATCH (s:Character{name:row.source})
-MATCH (t:Character{name:row.target})
-MERGE (s)-[:INTERACTS]->(i:Interaction)-[:INTERACTS]->(t)
-SET i.first_seen = toInteger(row.value)
-```
-
-Import metadata
-
-```
-LOAD CSV WITH HEADERS FROM "file:///characters.csv" as row
-MERGE (c:Character{name:row.title})
-SET c.url = row.url,
-    c.aliases = row.aliases,
-    c.blood = row.blood,
-    c.nationality = row.nationality,
-    c.species = row.species,
-    c.gender = row.gender
-FOREACH (h in CASE WHEN row.house IS NOT NULL THEN [1] ELSE [] END | MERGE (h1:House{name:row.house}) MERGE (c)-[:BELONGS_TO]->(h1))
-FOREACH (l in split(row.loyalty,',') | MERGE (g:Group{name:l}) MERGE (c)-[:LOYAL_TO]->(g))
-FOREACH (f in split(row.family,',') | MERGE (f1:Character{name:f}) MERGE (c)-[t:FAMILY_MEMBER]->(f1))  
-
-
-```
-
-Run pagerank:
-
-```
-CALL gds.pageRank.write({
-    nodeQuery:'MATCH (c:Character) RETURN id(c) as id',
-    relationshipQuery:'MATCH (c1:Character)-[:INTERACTS]-()-[:INTERACTS]-(c2:Character)
-                       RETURN id(c1) as source, id(c2) as target',
-    writeProperty:'pagerank'
-
-})
-```
-
-Run Louvain:
-
-```
-CALL gds.louvain.write({
-    nodeQuery:'MATCH (c:Character) RETURN id(c) as id',
-    relationshipQuery:'MATCH (c1:Character)-[:INTERACTS]-()-[:INTERACTS]-(c2:Character)
-                       RETURN id(c1) as source, id(c2) as target',
-    writeProperty:'community'
-
-})
-```
-
-Create full text index
-
-```
-CREATE FULLTEXT INDEX characterSearch FOR (n:Character) ON EACH [n.name]
-```
