@@ -33,7 +33,6 @@ Execute the queries stored in the `seed_data.cql`
 
 Graph consists of characters from the first Harry Potter book, their interactions, to which house they belong, and to which group they are loyal.
 
-.Model
 image::img/schema.png[]
 
 ## UI components
