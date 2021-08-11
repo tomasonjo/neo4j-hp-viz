@@ -1,11 +1,11 @@
 # neo4j-hp-viz
 
-This project is a demo application for network visualizations using the [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database) application.
+This project is a demo application for network visualizations using the https://grandstack.io[GRANDstack] (GraphQL, React, Apollo, Neo4j Database) application.
 The dataset consists of characters and their interactions from the first Harry Potter book.
-If you want to learn more about how the dataset was created check out [my blog post](https://medium.com/neo4j/turn-a-harry-potter-book-into-a-knowledge-graph-ffc1c45afcc8).
+If you want to learn more about how the dataset was created check out https://medium.com/neo4j/turn-a-harry-potter-book-into-a-knowledge-graph-ffc1c45afcc8[my blog post].
 
 
-The GraphQL endpoint is using the [Neo4j Graphql](https://github.com/neo4j/graphql) library.
+The GraphQL endpoint is using the https://github.com/neo4j/graphql[Neo4j Graphql] library.
 For the network visualizations, VisJS is being used.
 I have also added click events to network visualization to make it an interactive explorer of your graph data.
 Hopefully, this project will help you get started with implementing your own network visualizations with the GRANDstack.
