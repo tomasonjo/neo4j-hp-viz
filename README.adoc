@@ -15,6 +15,19 @@ Start the project with:
 ```
 docker-compose up
 ```
+### Macbook M1 users
+
+Pull arm neo4j image
+```
+docker pull neo4j/neo4j-arm64-experimental:4.2.11-arm6
+```
+
+Replace in docker-compose.yml
+
+```
+neo4j:
+    image: neo4j/neo4j-arm64-experimental:4.2.11-arm64
+```
 
 ## Seed data
 
@@ -65,6 +78,5 @@ image::img/network.png[]
 
 This component visualizes a classic network analysis.
 Nodes are colored based on the community they belong to and their size is calculated by how central in the network they are (pagerank).
-
 
 
